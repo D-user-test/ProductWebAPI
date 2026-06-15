@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductWebAPI.Data;
 using ProductWebAPI.DTOs;
@@ -20,6 +21,7 @@ public class ProductController : ControllerBase
         _iproduct = _iproductservices;
     }
 
+    [Authorize]
     [HttpPost("CreateProduct")]
     public IActionResult CreateProduct(Addproductdto product)
     {
@@ -101,6 +103,8 @@ public class ProductController : ControllerBase
         return Ok("Product and item updated successfully");
     }
 
+
+    [Authorize(Roles = "Admin")]
     [HttpDelete("{id}")]
     public IActionResult DeleteProduct(int id)
     {
