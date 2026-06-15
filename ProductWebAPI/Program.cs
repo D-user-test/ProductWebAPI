@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ProductWebAPI.Data;
+using ProductWebAPI.Services.ProductService;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,6 +17,8 @@ builder.Services.AddDbContext<Entityclass>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection"));
 });
+
+builder.Services.AddScoped<Iproductservices, productservices>();
 
 var app = builder.Build();
 
