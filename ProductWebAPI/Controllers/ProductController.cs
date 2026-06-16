@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ProductWebAPI.Data;
@@ -9,7 +10,9 @@ using ProductWebAPI.Services.ProductService;
 using System;
 
 [ApiController]
-[Route("api/[controller]")]
+
+[Route("api/v{version:apiVersion}/products")]
+[ApiVersion("1.0")]
 public class ProductController : ControllerBase
 {
     private readonly Entityclass _context;
@@ -48,7 +51,7 @@ public class ProductController : ControllerBase
 
     }
 
-    
+    [Authorize]
     [HttpGet]
     public IActionResult GetAllProducts()
     {
@@ -56,9 +59,12 @@ public class ProductController : ControllerBase
         return Ok(products);
     }
 
+    [Authorize]
     [HttpGet("{id}")]
     public IActionResult GetProductById(int id)
     {
+        var product1 = _context.products.Where(p => p.Id == id);
+
         var product = _context.products.Include(p => p.Items)
                                        .FirstOrDefault(p => p.Id == id);
         if (product == null) return NotFound();
@@ -67,6 +73,7 @@ public class ProductController : ControllerBase
 
     }
 
+    [Authorize]
     [HttpPut("{id}")]
     public IActionResult UpdateProduct(int id, updateproductdto updatedProduct)
     {
@@ -84,18 +91,25 @@ public class ProductController : ControllerBase
     }
 
     //using storedProcedure
+    [Authorize]
     [HttpPut("Update")]
-    public IActionResult Update(int id1, Product up)
+    public IActionResult Update(int id1, updateproductdto up)
     {
-        var product = _context.products.Include(p => p.Items).FirstOrDefault(p => p.Id == id1);
-        var item = up.Items.FirstOrDefault();
-        item.Id = product.Items[0].Id;
+        //var product = _context.products.Include(p => p.Items).FirstOrDefault(p => p.Id == id1);
+
+        var item = up.itemlist.ToList();
+       
         if (item == null)
             return BadRequest("No item provided for update");
 
-        var rowsAffected = _context.Database.ExecuteSqlRaw(
-            "EXEC UpdateProductAndItem @ProductId={0}, @NewProductName={1}, @ModifiedBy={2}, @ItemId={3}, @NewQuantity={4}",
-            id1, up.ProductName, up.ModifiedBy, item.Id, item.Quantity);
+        var rowsAffected = 0;
+        foreach (var items in item)
+        {
+           rowsAffected = _context.Database.ExecuteSqlRaw(
+         "EXEC UpdateProductAndItem @ProductId={0}, @NewProductName={1}, @ModifiedBy={2}, @ItemId={3}, @NewQuantity={4}",
+         id1, up.ProductName, up.ModifiedBy, items.Id, items.Quantity);
+
+        }
 
         if (rowsAffected == 0)
             return NotFound("No matching product/item found");

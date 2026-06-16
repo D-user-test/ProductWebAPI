@@ -39,9 +39,7 @@ namespace ProductWebAPI.Controllers
             log.username = logindata.Username;
             log.password = logindata.Password;
 
-
             _context.login.Add(log);
-
             _context.SaveChanges();
 
             // Return response DTO
@@ -55,6 +53,7 @@ namespace ProductWebAPI.Controllers
             return Ok(response);
            
         }
+
         [HttpGet("GetAllLogins")]
         public IActionResult GetAllLogins()
         {
@@ -66,8 +65,8 @@ namespace ProductWebAPI.Controllers
             return Ok(new { logins });
         }
 
-        [HttpGet("loginuserdata")]
-        
+
+        [HttpGet("loginuserdata")]      
         public IActionResult getuserdata(int id)
         {
             var login = _context.login.FirstOrDefault(l => l.Id == id);

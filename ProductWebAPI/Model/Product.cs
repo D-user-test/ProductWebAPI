@@ -19,6 +19,9 @@ namespace ProductWebAPI.Model
 
         public List<Item> Items { get; set; }
 
+        
+        public string? description { get; set; }
+
     }
     public class Item
     {

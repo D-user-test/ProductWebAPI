@@ -14,6 +14,8 @@ namespace ProductWebAPI.DTOs
 
         public List<Item> itemlist { get; set; }
 
+        public string? description { get; set; }
+
     }
 
     public class updateproductdto
@@ -27,6 +29,9 @@ namespace ProductWebAPI.DTOs
 
         public DateTime? ModifiedOn { get; set; }
 
+        public string? description { get; set; }
+
+        public List<Item> itemlist { get; set; }
 
     }
 }

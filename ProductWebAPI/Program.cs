@@ -1,10 +1,16 @@
+﻿using Asp.Versioning;
+using Asp.Versioning.ApiExplorer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using ProductWebAPI;
 using ProductWebAPI.Data;
 using ProductWebAPI.Services.ProductService;
 using ProductWebAPI.Services.TokenService;
 using System;
 using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +22,7 @@ builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen();
 
+
 builder.Services.AddDbContext<Entityclass>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DBConnection"));
@@ -25,7 +32,7 @@ builder.Services.AddScoped<Iproductservices, productservices>();
 
 builder.Services.AddScoped<ITokenServices, TokenServices>();
 
-builder.Services.AddAuthentication("Bearer")
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -37,9 +44,36 @@ builder.Services.AddAuthentication("Bearer")
             ValidIssuer = builder.Configuration["Jwt:Issuer"],
             ValidAudience = builder.Configuration["Jwt:Audience"],
             IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
+            ClockSkew = TimeSpan.Zero // removes default 5‑min grace period
         };
     });
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:3000") // React dev server
+                  .AllowAnyHeader()
+                  .AllowAnyMethod()
+                  .AllowCredentials();
+        });
+});
+
+builder.Services
+    .AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+    })
+    .AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'V";
+        options.SubstituteApiVersionInUrl = true;
+    });
+
 
 builder.Services.AddAuthorization();
 
@@ -57,8 +91,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseCors("AllowAll");
+
 app.UseAuthentication();
+
 app.UseAuthorization();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
