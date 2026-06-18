@@ -87,7 +87,7 @@ namespace ProductWebAPI.Controllers
                 .FromSqlRaw("EXEC VerifyLogin @Username={0}, @Password={1}", dto.Username, dto.Password)
                 .AsEnumerable()
                 .FirstOrDefault();
-
+            //this is result
             if (result == null)
                 return Unauthorized("Invalid credentials");
 
