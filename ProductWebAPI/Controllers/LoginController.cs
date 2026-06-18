@@ -5,6 +5,7 @@ using ProductWebAPI.Data;
 using ProductWebAPI.DTOs;
 using ProductWebAPI.Migrations;
 using ProductWebAPI.Model;
+using ProductWebAPI.Services.LoginService;
 using ProductWebAPI.Services.TokenService;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -19,15 +20,15 @@ namespace ProductWebAPI.Controllers
     public class LoginController : Controller
     {
         private readonly Entityclass _context;
-        private readonly IConfiguration _config;
+
         private readonly ITokenServices _token;
+        private readonly ILoginServices _loginService;
 
-
-        public LoginController(Entityclass context, IConfiguration config,ITokenServices token)
+        public LoginController(Entityclass context,ITokenServices token, ILoginServices loginService)
         {
             _context = context;   
-            _config = config;
             _token = token;
+            _loginService = loginService;
         }
       
 
@@ -82,15 +83,10 @@ namespace ProductWebAPI.Controllers
         [HttpPost("VerifyLogin")]
         public IActionResult VerifyLogin(logindto dto)
         {
-            var result = _context.login
-                .FromSqlRaw("EXEC VerifyLogin @Username={0}, @Password={1}", dto.Username, dto.Password)
-                .AsEnumerable()
-                .FirstOrDefault();
-            //this is result
+            var result = _loginService.VerifyLogin(dto.Username, dto.Password);
             if (result == null)
                 return Unauthorized("Invalid credentials");
 
-            // 🔹 Example: role-based token generation
             string role = result.username == "admin" ? "Admin" : "User";
             var token = _token.GenerateToken(result.username, role);
 
