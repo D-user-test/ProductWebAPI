@@ -18,6 +18,8 @@ namespace ProductWebAPI.Model
         public DateTime? ModifiedOn { get; set; }
 
         public List<Item> Items { get; set; }
+        
+        public string? description { get; set; }
 
     }
     public class Item

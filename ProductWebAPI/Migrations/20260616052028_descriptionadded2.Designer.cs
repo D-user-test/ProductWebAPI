@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ProductWebAPI.Data;
 
@@ -11,9 +12,11 @@ using ProductWebAPI.Data;
 namespace ProductWebAPI.Migrations
 {
     [DbContext(typeof(Entityclass))]
-    partial class EntityclassModelSnapshot : ModelSnapshot
+    [Migration("20260616052028_descriptionadded2")]
+    partial class descriptionadded2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
