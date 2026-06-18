@@ -38,8 +38,6 @@ public class ProductController : ControllerBase
             {
                 return BadRequest("Item quantity cannot be 0. Please provide valid values.");
             }
-
-      
             product.CreatedOn = DateTime.Now;
             _iproduct.AddProduct(product);
             return Ok("Product created successfully");
