@@ -1,0 +1,42 @@
+﻿
+
+
+Create proc [dbo].[VerifyLogin]
+    @Username VARCHAR(60),
+    @Password VARCHAR(60)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    SELECT Id, Username,password
+    FROM login
+    WHERE Username = @Username AND Password = @Password;
+END
+
+
+
+
+Create PROCEDURE [dbo].[UpdateProductAndItem]
+    @ProductId INT,
+    @NewProductName VARCHAR(100),
+    @ModifiedBy VARCHAR(100),
+    @ItemId INT,
+    @NewQuantity INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Update Product
+    UPDATE p
+    SET p.ProductName = @NewProductName,
+        p.ModifiedBy = @ModifiedBy,
+        p.ModifiedOn = GETDATE()
+    FROM Products p
+    WHERE p.Id = @ProductId;
+
+    -- Update Item (linked to Product)
+    UPDATE i
+    SET i.Quantity = @NewQuantity
+    FROM Item i
+    WHERE i.Id = @ItemId AND i.ProductId = @ProductId;
+END
