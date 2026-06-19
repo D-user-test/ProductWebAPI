@@ -63,8 +63,6 @@ public class ProductController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetProductById(int id)
     {
-       
-
         var product = _context.products.Include(p => p.Items)
                                        .FirstOrDefault(p => p.Id == id);
         if (product == null) return NotFound();
