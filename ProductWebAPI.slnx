@@ -1,3 +1,4 @@
 <Solution>
+  <Project Path="productclasslibrary/productclasslibrary.csproj" Id="6494c2dd-0b62-4dd3-9e60-0ed0f1575bd6" />
   <Project Path="ProductWebAPI/ProductWebAPI.csproj" />
 </Solution>

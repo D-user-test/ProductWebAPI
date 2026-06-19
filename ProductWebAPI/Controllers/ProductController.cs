@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ProductWebAPI;
 using ProductWebAPI.Data;
 using ProductWebAPI.DTOs;
 using ProductWebAPI.Model;
@@ -13,6 +14,7 @@ using System;
 
 [Route("api/v{version:apiVersion}/products")]
 [ApiVersion("1.0")]
+[ServiceFilter(typeof(LogActionFilter))]
 public class ProductController : ControllerBase
 {
     private readonly Entityclass _context;
@@ -61,7 +63,7 @@ public class ProductController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetProductById(int id)
     {
-        var product1 = _context.products.Where(p => p.Id == id);
+       
 
         var product = _context.products.Include(p => p.Items)
                                        .FirstOrDefault(p => p.Id == id);
