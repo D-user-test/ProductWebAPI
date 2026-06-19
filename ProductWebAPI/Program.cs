@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductWebAPI;
 using ProductWebAPI.Data;
+using ProductWebAPI.Services.LoginService;
 using ProductWebAPI.Services.ProductService;
 using ProductWebAPI.Services.TokenService;
 using System;
@@ -34,6 +35,7 @@ builder.Services.AddDbContext<Entityclass>(options =>
 builder.Services.AddScoped<Iproductservices, productservices>();
 
 builder.Services.AddScoped<ITokenServices, TokenServices>();
+builder.Services.AddScoped<ILoginServices, LoginServices>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
