@@ -138,7 +138,4 @@ public class LoginControllerTests
         Assert.Equal(500, serverError.StatusCode);
         Assert.Equal("An error occurred while processing your request.", serverError.Value);
     }
-
-
-
 }
