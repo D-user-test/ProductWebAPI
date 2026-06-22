@@ -1,11 +1,13 @@
 ﻿using Asp.Versioning;
 using Asp.Versioning.ApiExplorer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProductWebAPI;
 using ProductWebAPI.Data;
+using ProductWebAPI.DTOs;
 using ProductWebAPI.Services.LoginService;
 using ProductWebAPI.Services.ProductService;
 using ProductWebAPI.Services.TokenService;
@@ -79,6 +81,18 @@ builder.Services
         options.SubstituteApiVersionInUrl = true;
     });
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("loginLimiter", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 5; // max 5 requests
+        limiterOptions.Window = TimeSpan.FromMinutes(1); // per minute
+        limiterOptions.QueueLimit = 0; // no queuing
+    });
+});
+
+
+
 
 builder.Services.AddAuthorization();
 
@@ -104,6 +118,10 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseRateLimiter();
+
+
 
 app.UseHttpsRedirection();
 

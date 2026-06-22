@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using ProductWebAPI.Data;
@@ -81,6 +82,7 @@ namespace ProductWebAPI.Controllers
 
 
         [HttpPost("VerifyLogin")]
+        [EnableRateLimiting("loginLimiter")]
         public IActionResult VerifyLogin(logindto dto)
         {
             try { 
